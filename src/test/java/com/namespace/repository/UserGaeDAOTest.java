@@ -100,7 +100,7 @@ public class UserGaeDAOTest extends TestBase{
 		
 		UserGAE userEnabled = new UserGAE("userEnabled", "12345", true, true);
 		Objectify ofy = this.objectifyFactory.begin();
-		ofy.put(userEnabled);
+		ofy.save().entity(userEnabled);
 		assertEquals(1, this.dao.findAllEnabledUsers(true).size());
 		assertEquals(userEnabled, this.dao.findAllEnabledUsers(true).get(0));
 	}
@@ -114,7 +114,7 @@ public class UserGaeDAOTest extends TestBase{
 		assertTrue(true);
 		
 		UserGAE user = new UserGAE("user", "12345", true, true);
-		this.objectifyFactory.begin().put(user);
+		this.objectifyFactory.begin().save().entity(user).now();
 		List<UserGAE> userFromDatastoreList2 = this.dao.findAllEnabledUsers(true);
 		assertTrue(userFromDatastoreList2.contains(user));
 	}
@@ -137,7 +137,7 @@ public class UserGaeDAOTest extends TestBase{
 		List<UserGAE> userListToPersist = generateUsersAndPersistThem();
 		
 		List<UserGAE> userFromDatastoreList = this.objectifyFactory.begin()
-												.query(UserGAE.class).list();
+												.load().type(UserGAE.class).list();
 		
 		compareIfList1ContainsList2Objects(userListToPersist, userFromDatastoreList);
 		assertEquals(userListToPersist.size(), userFromDatastoreList.size());
@@ -166,7 +166,7 @@ public class UserGaeDAOTest extends TestBase{
 	public void update_RightResults(){
 		generateUsersAndPersistThem();
 		Objectify ofy = this.objectifyFactory.begin();
-		UserGAE user = ofy.query(UserGAE.class).get();
+		UserGAE user = ofy.load().type(UserGAE.class).first().now();
 		user.setPassword("0000");
 		try {
 			this.dao.update(user);
@@ -175,7 +175,7 @@ public class UserGaeDAOTest extends TestBase{
 		} finally {
 			assertTrue(true);
 		}
-		UserGAE updatedUser = ofy.get(UserGAE.class, user.getUsername());
+		UserGAE updatedUser = ofy.load().type(UserGAE.class).filterKey("username", user.getUsername()).first().now();
 		assertEquals(updatedUser, user);
 	}
 
@@ -238,7 +238,7 @@ public class UserGaeDAOTest extends TestBase{
 		for (Iterator<UserGAE> iterator = userListToPersist.iterator(); iterator
 				.hasNext();) {
 			UserGAE user = (UserGAE) iterator.next();
-			ofy.put(user);
+			ofy.save().entity(user);
 		}
 	}
 

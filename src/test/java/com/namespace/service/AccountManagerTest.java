@@ -47,7 +47,7 @@ public class AccountManagerTest extends TestBase{
 		assertFalse(this.manager.updateUser(null));
 		assertFalse(this.manager.updateUser(new UserGAE()));
 		Objectify ofy = super.objectifyFactory.begin();
-		assertEquals(0, ofy.query(UserGAE.class).list().size());
+		assertEquals(0, ofy.load().type(UserGAE.class).list().size());
 		assertFalse(this.manager.updateUser(new UserGAE("user1", "12345", true)));
 	}
 	
@@ -56,12 +56,12 @@ public class AccountManagerTest extends TestBase{
 		Objectify ofy = super.objectifyFactory.begin();
 		
 		UserGAE user = new UserGAE("user", "12345", true);
-		ofy.put(user);
+		ofy.save().entity(user);
 		
 		user.setPassword("AAAAAAAAAA");
 		assertTrue(this.manager.updateUser(user));
-		assertEquals(user, ofy.query(UserGAE.class).get());
-		assertEquals(1, ofy.query(UserGAE.class).filter("username", user.getUsername()).list().size());
+		assertEquals(user, ofy.load().type(UserGAE.class).first().now());
+		assertEquals(1, ofy.load().type(UserGAE.class).filter("username", user.getUsername()).list().size());
 	}
 	
 	@Test
@@ -78,18 +78,18 @@ public class AccountManagerTest extends TestBase{
 		Account account = new Account(null, "David", "D.", "example@example.com", null);
 		assertFalse(this.manager.updateAccount(account));
 		
-		ofy.put(account);
+		ofy.save().entity(account);
 		assertFalse(this.manager.updateAccount(account));
 
 		/*
 		 * Right results
 		 */
-		ofy.put(user);
-		account.setUser(new Key<UserGAE>(UserGAE.class, user.getUsername()));
-		ofy.put(account);
+		ofy.save().entity(user);
+		account.setUser(Key.create(UserGAE.class, user.getUsername()));
+		ofy.save().entity(account);
 		assertTrue(this.manager.updateAccount(account));
 		
-		Account accountFromDatastore = ofy.query(Account.class).ancestor(user).get();
+		Account accountFromDatastore = ofy.load().type(Account.class).ancestor(user).first().now();
 		assertEquals(account, accountFromDatastore); 
 		
 	}

@@ -145,7 +145,7 @@ public class UsersControllerIntegrationTest extends TestBase {
 //		Objectify ofy = this.objectifyFactory.begin();
 //		UserGAE user = ofy.query(UserGAE.class).get();
 //		user.setEnabled(false);
-//		ofy.put(user);
+//		ofy.save().entity(user);
 
 		/*
 		 * TODO I need to test the boundary conditions too.
@@ -170,8 +170,8 @@ public class UsersControllerIntegrationTest extends TestBase {
 	
 	private void createAccountAndPutIntoDatastore(){
 		Objectify ofy = this.objectifyFactory.begin();
-		Key<UserGAE> userKey = ofy.put(new UserGAE(USER_USERNAME, USER_PASSWORD, true, true));
-		ofy.put(new Account(null, ACCOUNT_FIRST_NAME, ACCOUNT_LAST_NAME, ACCOUNT_EMAIL, userKey));
+		Key<UserGAE> userKey = ofy.save().entity(new UserGAE(USER_USERNAME, USER_PASSWORD, true, true)).now();
+		ofy.save().entity(new Account(null, ACCOUNT_FIRST_NAME, ACCOUNT_LAST_NAME, ACCOUNT_EMAIL, userKey));
 		
 	}
 	

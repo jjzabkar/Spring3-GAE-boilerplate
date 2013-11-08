@@ -86,12 +86,12 @@ public class UserAdministrationManagerTest extends TestBase {
 		
 		this.manager.createNewUserAccount(user, account);
 		
-		UserGAE userFromDatastore = ofy.query(UserGAE.class)
+		UserGAE userFromDatastore = ofy.load().type(UserGAE.class)
 										   .filter("username", user.getUsername())
-										   .get();
-		Account accountFromDatastore = ofy.query(Account.class)
+										   .first().now();
+		Account accountFromDatastore = ofy.load().type(Account.class)
 										   .ancestor(user)
-										   .get();
+										   .first().now();
 		assertEquals(user, userFromDatastore);
 		assertEquals(account, accountFromDatastore);
 	}
@@ -145,12 +145,12 @@ public class UserAdministrationManagerTest extends TestBase {
 		UserGAE user1 = new UserGAE("user1", "12345", true, false);
 		UserGAE user2 = new UserGAE("user2", "142345", false, true);
 		UserGAE user3 = new UserGAE("user3", "012345", false, true);
-		Key<UserGAE> userKey1 = new Key<UserGAE>(UserGAE.class, "user1");
-		Key<UserGAE> userKey2 = new Key<UserGAE>(UserGAE.class, "user2");
-		Key<UserGAE> userKey3 = new Key<UserGAE>(UserGAE.class, "user3");
-		ofy.put(user1);
-		ofy.put(user2);
-		ofy.put(user3);
+		Key<UserGAE> userKey1 = Key.create(UserGAE.class, "user1");
+		Key<UserGAE> userKey2 = Key.create(UserGAE.class, "user2");
+		Key<UserGAE> userKey3 = Key.create(UserGAE.class, "user3");
+		ofy.save().entity(user1);
+		ofy.save().entity(user2);
+		ofy.save().entity(user3);
 //		users.add(user2);
 //		users.add(user);
 		
@@ -160,9 +160,9 @@ public class UserAdministrationManagerTest extends TestBase {
 		accounts.add(account1);
 		accounts.add(account2);
 		accounts.add(account3);
-		ofy.put(account1);
-		ofy.put(account2);
-		ofy.put(account3);
+		ofy.save().entity(account1);
+		ofy.save().entity(account2);
+		ofy.save().entity(account3);
 		return accounts;
 	}
 	

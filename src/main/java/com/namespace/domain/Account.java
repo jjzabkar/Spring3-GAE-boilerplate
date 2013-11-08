@@ -1,10 +1,11 @@
 package com.namespace.domain;
 
-import javax.persistence.Id;
-
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
 
+@Entity
 public class Account{
 	
 	@Id
