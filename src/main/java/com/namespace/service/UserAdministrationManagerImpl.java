@@ -48,7 +48,7 @@ public class UserAdministrationManagerImpl extends AbstractCurrentUserManager im
 			e.printStackTrace();
 		}
 		
-		Key<UserGAE> userKey = new Key<UserGAE>(UserGAE.class, user.getUsername());
+		Key<UserGAE> userKey = Key.create(UserGAE.class, user.getUsername());
 		account.setUser(userKey);
 		try {
 			logger.info("Trying to create a new account: " + account.toString());
